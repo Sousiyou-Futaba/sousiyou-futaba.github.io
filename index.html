@@ -1,10 +1,39 @@
 <!DOCTYPE html>
-<html lang="ja">
-    <head>
+<html>
+    <head lang="ja">
         <meta charset="utf-8">
-        <title>githubpages試し</title>
+        <title>病み上がり</title>
     </head>
     <body>
-        <h1>githubでサイトが作れるというので、試してみました。何かあると思って覗いた人、残念でした。</h1>
+        <button id="a1">音が出るよ。押したら。</button>
+
+        <script>
+            var a1 = document.getElementById("a1");
+            var body = document.getElementsByTagName("body")[0];
+            var svg = document.getElementsByTagName("svg")[0];
+            var audioCtx;
+            a1.addEventListener("click",
+                function(){
+                    audioCtx = new AudioContext({sampleRate: 44100,});
+                }
+            );
+            body.addEventListener("click",
+                function(e){
+                    if (!audioCtx){return};
+                    var ab = audioCtx.createBuffer(2, audioCtx.sampleRate * 3, audioCtx.sampleRate);
+                    var freq = Math.random()*2500+100;
+                    for (var c=0; c<ab.numberOfChannels; c++){
+                        var abd_ata = ab.getChannelData(c);
+                        for (var n=0; n<ab.length; n++){
+                            abd_ata[n] = Math.sin(2*Math.PI*freq*n/audioCtx.sampleRate)*((audioCtx.sampleRate*3-n)/(audioCtx.sampleRate*3))**2;
+                        }
+                    }
+                    var source = audioCtx.createBufferSource();
+                    source.buffer = ab;
+                    source.connect(audioCtx.destination);
+                    source.start();
+                }
+            );
+        </script>
     </body>
 </html>
